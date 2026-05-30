@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Générateur d'images par intelligence artificielle - Créez des images uniques à partir de descriptions textuelles avec Stable Diffusion.">
+    <title>🎨 AI Image Generator - Génération d'Images par IA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- ===== PARTICULES D'ARRIÈRE-PLAN ===== -->
+    <div class="bg-particles" id="bgParticles"></div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <defs>
+                            <linearGradient id="logoGrad" x1="0" y1="0" x2="32" y2="32">
+                                <stop offset="0%" stop-color="#a855f7"/>
+                                <stop offset="100%" stop-color="#6366f1"/>
+                            </linearGradient>
+                        </defs>
+                        <rect width="32" height="32" rx="8" fill="url(#logoGrad)"/>
+                        <path d="M8 20L13 12L17 18L20 14L24 20H8Z" fill="white" opacity="0.9"/>
+                        <circle cx="21" cy="11" r="3" fill="white" opacity="0.9"/>
+                    </svg>
+                </div>
+                <h1>AI Image Generator</h1>
+            </div>
+            <p class="header-subtitle">Transformez vos idées en images grâce à l'intelligence artificielle</p>
+        </div>
+    </header>
+
+    <!-- ===== SECTION PRINCIPALE ===== -->
+    <main class="main-container">
+
+        <!-- ===== FORMULAIRE DE GÉNÉRATION ===== -->
+        <section class="generator-section">
+            <div class="card generator-card">
+                <div class="card-header">
+                    <h2>
+                        <span class="card-icon">✨</span>
+                        Créer une Image
+                    </h2>
+                    <p class="card-description">Décrivez l'image que vous souhaitez générer en détail</p>
+                </div>
+
+                <form id="generateForm">
+                    <!-- Prompt principal -->
+                    <div class="form-group">
+                        <label for="prompt">
+                            <span class="label-icon">💬</span>
+                            Prompt (Description)
+                        </label>
+                        <textarea 
+                            id="prompt" 
+                            name="prompt" 
+                            rows="3" 
+                            placeholder="Ex: Un château magique flottant dans les nuages au coucher du soleil, entouré de dragons dorés..."
+                            required
+                        ></textarea>
+                    </div>
+
+                    <!-- Prompt négatif -->
+                    <div class="form-group">
+                        <label for="negativePrompt">
+                            <span class="label-icon">🚫</span>
+                            Prompt Négatif <span class="optional">(optionnel)</span>
+                        </label>
+                        <textarea 
+                            id="negativePrompt" 
+                            name="negative_prompt" 
+                            rows="2" 
+                            placeholder="Éléments à éviter : flou, déformé, basse qualité..."
+                        ></textarea>
+                    </div>
+
+                    <!-- Styles -->
+                    <div class="form-group">
+                        <label>
+                            <span class="label-icon">🎨</span>
+                            Style Artistique
+                        </label>
+                        <div class="style-grid" id="styleGrid">
+                            <button type="button" class="style-btn active" data-style="default">
+                                <span class="style-emoji">🌟</span>
+                                <span>Défaut</span>
+                            </button>
+                            <button type="button" class="style-btn" data-style="realistic">
+                                <span class="style-emoji">📷</span>
+                                <span>Réaliste</span>
+                            </button>
+                            <button type="button" class="style-btn" data-style="artistic">
+                                <span class="style-emoji">🖼️</span>
+                                <span>Artistique</span>
+                            </button>
+                            <button type="button" class="style-btn" data-style="anime">
+                                <span class="style-emoji">🎌</span>
+                                <span>Anime</span>
+                            </button>
+                            <button type="button" class="style-btn" data-style="3d">
+                                <span class="style-emoji">🧊</span>
+                                <span>3D Render</span>
+                            </button>
+                            <button type="button" class="style-btn" data-style="watercolor">
+                                <span class="style-emoji">💧</span>
+                                <span>Aquarelle</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Bouton générer -->
+                    <button type="submit" class="btn-generate" id="btnGenerate">
+                        <span class="btn-text">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                            </svg>
+                            Générer l'Image
+                        </span>
+                        <span class="btn-loading" style="display:none;">
+                            <div class="spinner"></div>
+                            Génération en cours...
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- ===== RÉSULTAT ===== -->
+            <div class="card result-card" id="resultCard" style="display:none;">
+                <div class="card-header">
+                    <h2>
+                        <span class="card-icon">🖼️</span>
+                        Image Générée
+                    </h2>
+                </div>
+                <div class="result-content">
+                    <div class="result-image-wrapper">
+                        <img id="resultImage" src="" alt="Image générée par IA">
+                    </div>
+                    <div class="result-info">
+                        <p class="result-prompt" id="resultPrompt"></p>
+                        <div class="result-actions">
+                            <a id="downloadBtn" href="" download class="btn-action btn-download">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V15"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                Télécharger
+                            </a>
+                            <button class="btn-action btn-new" onclick="document.getElementById('prompt').focus()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                Nouvelle Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== GALERIE ===== -->
+        <section class="gallery-section">
+            <div class="card gallery-card">
+                <div class="card-header">
+                    <h2>
+                        <span class="card-icon">🏛️</span>
+                        Galerie
+                    </h2>
+                    <p class="card-description">Historique de vos images générées</p>
+                </div>
+
+                <div class="gallery-grid" id="galleryGrid">
+                    <!-- Images générées seront insérées ici via JS -->
+                </div>
+
+                <div class="gallery-empty" id="galleryEmpty">
+                    <div class="empty-icon">🎨</div>
+                    <p>Aucune image générée pour le moment</p>
+                    <p class="empty-hint">Commencez par entrer un prompt ci-dessus !</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== LIGHTBOX ===== -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <div class="lightbox-content">
+            <img id="lightboxImage" src="" alt="Image en plein écran">
+            <div class="lightbox-info">
+                <p id="lightboxPrompt"></p>
+                <div class="lightbox-meta">
+                    <span id="lightboxStyle"></span>
+                    <span id="lightboxDate"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TOAST NOTIFICATION ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <p>Projet IA Générative — Génération d'Images par Intelligence Artificielle</p>
+        <p class="footer-tech">Stable Diffusion XL · Flask · Hugging Face</p>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
