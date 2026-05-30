@@ -15,9 +15,9 @@ Application web permettant de **générer des images à partir de descriptions t
 
 ##  🎬 Vidéo Démo
 
-Démonstration complète de l'application :
+Démonstration complète de l'application (fichier trop volumineux pour être stocké localement) :
 
-![Demo Video](./demo.mp4)
+📽️ [Regarder la démo sur Google Drive](https://drive.google.com/file/d/1l7eh_Ge9l_cPW28XJF67bMmFJA-iMRcB/view?usp=sharing)
 
 ##  Architecture du Projet
 
